@@ -1,23 +1,30 @@
 
 import { NextResponse } from 'next/server';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: Request) {
   try {
     const { command } = await req.json();
-    
-    // Aqui a mágica acontece: O Orquestrador decide o que fazer
-    // Por enquanto, devolvemos a confirmação de recebimento da inteligência
-    const responseText = `Orquestrador Kaizen: Processando ordem de Rogger: "${command}". Iniciando varredura em 3, 2, 1...`;
-    
+
+    // O Orquestrador agora usa o Perfil Rogger como System Prompt
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4-1106-preview",
+      messages: [
+        { role: "system", content: "Você é o Orquestrador da Nave Mãe do Rogger. Seu tom é brutal, prático e focado em execução. Você conhece o histórico 2024-2026 (Hupmix, Oxypower, VKB). Sua missão é decompor ordens em ações reais." },
+        { role: "user", content: command }
+      ],
+    });
+
+    const aiResponse = completion.choices[0].message.content;
+
     return NextResponse.json({ 
       status: 'success', 
-      message: responseText,
-      logs: [
-        { time: new Date().toLocaleTimeString(), text: 'OpenAI decompondo intenção...' },
-        { time: new Date().toLocaleTimeString(), text: 'Gemini preparando acesso ao Gmail...' }
-      ]
+      message: aiResponse,
+      logs: [{ time: new Date().toLocaleTimeString(), text: 'Inteligência OpenAI processada.' }]
     });
   } catch (error) {
-    return NextResponse.json({ status: 'error', message: 'Falha na Orquestração.' }, { status: 500 });
+    return NextResponse.json({ status: 'error', message: 'Cérebro offline ou sem chave.' }, { status: 500 });
   }
 }
