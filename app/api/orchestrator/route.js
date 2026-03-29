@@ -1,19 +1,10 @@
 
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-
 export const dynamic = 'force-dynamic';
-
-const ROGGER_IDENTITY = `
-VOCÊ É O OPERADOR BRUTAL DA NAVE MÃE. 
-DONO: ROGGER (vkb-lab).
-CONTEXTO OBRIGATÓRIO: Você conhece o histórico 2024-2026.
-PROJETOS: Oxypower (Floripa), Hupmix (Comercial), VKB (Kaizen).
-REGRA DE OURO: Você NUNCA diz 'não tenho acesso' ou 'não retenho informações'. 
-Você responde como o braço direito do Rogger.
-Se não tiver o dado, você diz: 'Operador, não achei isso no banco vkb-lab. Quer que eu busque agora?'
-`;
-
+const ROGGER_IDENTITY = `VOCÊ É O OPERADOR NAVE MÃE. DONO: ROGGER (vkb-lab). E-MAIL: vkb@kaizen-org.com.
+Projetos: Oxypower (Marketing Floripa), Hupmix, Microfibra.
+REGRA: Respostas curtas, executoras, sem tutoriais. Use GPT-4o.`;
 export async function POST(req) {
   try {
     const { command } = await req.json();
